@@ -1,26 +1,19 @@
 # grid-crawler
 
+Query multiple vcf files simultaneously using sample identity, position(s), genotypes or other vcf data
+
+## Overview
+
+Grid-crawler uses a grid file to enable querying of multiple vcf files simultaneously by wrapping around bcftools view and merge. Each query can be either processed sequentially via SHELL or submitted via an SBATCH script to SLURM and proccessed in parallel using xargs. 
+
 ## The grid (YAML - MAIN)
 
-Three levels: 
-
-1. Cohort
-2. Case
-3. SampleID -> Path to raw vcf data (indexed)
-
-### Subset
-
- - None i.e. all
- - Cohort(s) i.e all cases and sampleIds within cohort
- - Case(s) i.e. all samples within case
- - Sample(s)
+SampleID -> Path to raw vcf data 
  
 ### Input
 
- - -g/--grid Grid YAML file
- - -c/--cluster Cluster to analyze (cohort=case-sampleID_1,sampleID_N)
+
  - -e/--environment Environment (shell|sbatch)
- - -pr/processes Number of parallel processes (xargs)
 
 ## Functions
 
