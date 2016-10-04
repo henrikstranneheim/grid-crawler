@@ -9,7 +9,7 @@ Grid-crawler uses a grid file to enable querying of multiple vcf files simultane
 ## Example usage
 
 ```
-$ perl grid-crawler grid-file.yaml -s sampleID_1 -s sampleID_2  -s sampleID_3 -p 1,X:200050-2000600,22:456793-456793 -g ^miss -e "DV>5 && INFO/SGB>3 " -env shell -sen source activate mip4.0 -ot b
+$ perl grid-crawler.pl grid-file.yaml -s sampleID_1 -s sampleID_2  -s sampleID_3 -p 1,X:200050-2000600,22:456793-456793 -g ^miss -e "DV>5 && INFO/SGB>3 " -env shell -sen source activate mip4.0 -ot b
 ```
 
 ## Installation
