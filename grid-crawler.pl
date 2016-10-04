@@ -13,7 +13,6 @@ use charnames qw( :full :short );
 use Getopt::Long;
 use Params::Check qw[check allow last_error];
 $Params::Check::PRESERVE_CASE = 1;  #Do not convert to lower case
-use vars qw($USAGE);
 use Time::Piece;
 use Cwd;
 use File::Path qw(make_path);
@@ -25,6 +24,8 @@ use IPC::Cmd qw[can_run run];
 use YAML;
 $YAML::QuoteNumericStrings = 1;  #Force numeric values to strings in YAML representation
 use Log::Log4perl;
+
+our $USAGE;
 
 BEGIN {
     $USAGE =
@@ -199,11 +200,13 @@ my %cmd = &BcfToolsViewCmd({pathHashRef => \%path,
 			    exclude => $exclude,
 			    include => $include,
 			    genoType => $genoType,
+			    outputType => $outputType,
 			    outfileEnding => $outfileEnding,
 			   });
 
 my @mergecmds = &BcfToolsMergeCmd({pathHashRef => \%path,
 				   outDataDir => $outDataDir,
+				   outputType => $outputType,
 				   outfileEnding => $outfileEnding,
 				  });
 
@@ -509,13 +512,14 @@ sub BcfToolsViewCmd {
     
 ##Function : Generate command line instructions for bcfTools view
 ##Returns  : ""
-##Arguments: $pathHashRef, $positionsArrayRef, $outDataDir, $exclude, $include, $genoType, $outfileEnding
+##Arguments: $pathHashRef, $positionsArrayRef, $outDataDir, $exclude, $include, $genoType, $outputType, $outfileEnding
 ##         : $pathHashRef       => PathHashRef
 ##         : $positionsArrayRef => Positions to analyse
 ##         : $outDataDir        => Outdata directory
 ##         : $exclude           => Filters to exclude variant
 ##         : $include           => Filters to include variant
 ##         : $genoType          => Require or exclude genotype
+##         : $outputType        => The output data type
 ##         : $outfileEnding     => Outfile ending depending on outputType
     
     my ($argHashRef) = @_;
@@ -527,6 +531,7 @@ sub BcfToolsViewCmd {
     my $exclude;
     my $include;
     my $genoType;
+    my $outputType;
     my $outfileEnding;
     
     my $tmpl = { 
@@ -536,6 +541,7 @@ sub BcfToolsViewCmd {
 	exclude => { strict_type => 1, store => \$exclude},
 	include => { strict_type => 1, store => \$include},
 	genoType => { strict_type => 1, store => \$genoType},
+	outputType => { strict_type => 1, store => \$outputType},
 	outfileEnding => { strict_type => 1, store => \$outfileEnding},
     };
     
@@ -627,9 +633,10 @@ sub BcfToolsMergeCmd {
     
 ##Function : Generate command line instructions for bcfTools merge
 ##Returns  : ""
-##Arguments: $pathHashRef, $outDataDir, $outfileEnding
+##Arguments: $pathHashRef, $outDataDir, $outputType, $outfileEnding
 ##         : $pathHashRef   => PathHashRef
 ##         : $outDataDir    => Outdata directory
+##         : $outputType    => The output data type
 ##         : $outfileEnding => Outfile ending depending on outputType
     
     my ($argHashRef) = @_;
@@ -637,11 +644,13 @@ sub BcfToolsMergeCmd {
     ## Flatten argument(s)
     my $pathHashRef;
     my $outDataDir;
+    my $outputType;
     my $outfileEnding;
 
     my $tmpl = { 
 	pathHashRef => { required => 1, defined => 1, default => {}, strict_type => 1, store => \$pathHashRef},
 	outDataDir => { required => 1, defined => 1, strict_type => 1, store => \$outDataDir},
+	outputType => { strict_type => 1, store => \$outputType},
 	outfileEnding => { strict_type => 1, store => \$outfileEnding},
     };
     
@@ -654,13 +663,20 @@ sub BcfToolsMergeCmd {
     push (@{$cmdsArrayRef}, "bcftools");
     push (@{$cmdsArrayRef}, "merge");
 
+    ## OutputType
+    if($outputType) {
+	
+	push(@{$cmdsArrayRef}, "--output-type");
+	push(@{$cmdsArrayRef}, $outputType);
+    }
+
     ## Add outdata paths
     foreach my $path (keys %{$pathHashRef}) {
 	
 	push (@{$cmdsArrayRef}, catfile($outDataDir, join("_", @{${$pathHashRef}{$path}}).$outfileEnding));
     }
     
-    push (@{$cmdsArrayRef}, ">", catfile($outDataDir, "gc_merged.vcf"));  #Outdata
+    push (@{$cmdsArrayRef}, ">", catfile($outDataDir, "gc_merged".$outfileEnding));  #Outdata
     
     return @{$cmdsArrayRef};
 }
@@ -726,6 +742,11 @@ sub SubmitCommand {
 
 	    $logger->info("Merging grid search results", "\n");
 
+	    if(@sourceEnvironmentCommand) {
+		
+		## Add source environment command 
+		unshift(@{$mergecmdsArrayRef}, @{$sourceEnvironmentCommandArrayRef});
+	    }
 	    my( $success, $error_message, $full_buf, $stdout_buf, $stderr_buf ) =
 		run( command => $mergecmdsArrayRef, verbose => $verbose );
 	}

@@ -21,8 +21,6 @@ BEGIN {
 		   "File::Path",
 		   "File::Spec::Functions",
 		   "List::Util",
-		   "vars",
-		   "Params::Check",
 		   "IPC::Cmd",
 		   "YAML",
 		   "Log::Log4perl",
@@ -80,7 +78,7 @@ $Params::Check::PRESERVE_CASE = 1;  #Do not convert to lower case
 ##Cpan
 use YAML;
 
-use vars qw($USAGE);
+our $USAGE;
 
 BEGIN {
     $USAGE =
