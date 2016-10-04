@@ -9,7 +9,26 @@ Grid-crawler uses a grid file to enable querying of multiple vcf files simultane
 ## Example usage
 
 ```
-perl grid-crawler grid-file.yaml -s sampleID_1 -s sampleID_2  -s sampleID_3 -p 1,X:200050-2000600,22:456793-456793 -g ^miss -e "DV>5 && INFO/SGB>3 " -env shell -sen source activate mip4.0 -ot b
+$ perl grid-crawler grid-file.yaml -s sampleID_1 -s sampleID_2  -s sampleID_3 -p 1,X:200050-2000600,22:456793-456793 -g ^miss -e "DV>5 && INFO/SGB>3 " -env shell -sen source activate mip4.0 -ot b
+```
+
+## Installation
+
+Grid-crawler is written in perl and therfore requires that perl is installed on your OS. 
+
+
+ ```
+ $ git clone https://github.com/henrikstranneheim/grid-crawler.git
+ $ cd grid-crawler
+ ```
+
+After this you can decide whether to make grid-crawler an "executable" by either adding the install directory to the ``$PATH`` in e.g.  "``~/.bash_profile``" or move all the files from this directory to somewhere already in your path like "``~/usr/bin``". 
+ Remember to make the file(s) executable by ``chmod +x file``.
+
+### Testing
+
+```
+$ cd t; perl run-test.pl
 ```
 
 ## Input
@@ -37,17 +56,17 @@ Basically anything in the vcf can be filtered using this approach.
 
 ### Genotype
 
-Inlcude or exclude (prefix with ^) genotypes - based on flag '-g het|hom|miss'.
+Inlcude or exclude (prefix with ^) genotypes - based on flag '-g [het|hom|miss]'.
 
 ## Execution
 
 ### Environments
 
-Execute the query sequenctially in shell or in parallel (xargs or classic print/wait) via sbatch and SLURM ('-env shell|sbatch').
+Execute the query sequenctially in shell or in parallel (xargs or classic print/wait) via sbatch and SLURM ('-env [shell|sbatch]').
 
 #### SLURM
 
-Requires a mandatory flag '--projectID', and some additional options of setting email alerts and SLURM quality of service.
+Requires a mandatory flag '--projectID [X]', and some additional options of setting email alerts and SLURM quality of service.
 
 #### Conda environment
 
@@ -59,7 +78,7 @@ Grid-crawler will automatically merge the output variants to a single file if an
 
 Redirect query output data using ('--outDataDir').
 
-Set the output type using ('--outputType b: compressed BCF, z: compressed VCF').
+Set the output type using ('--outputType [b: compressed BCF, z: compressed VCF]').
 
 ## Dependencies
 
