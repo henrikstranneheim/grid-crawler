@@ -8,20 +8,20 @@ BEGIN {
 	);
     
     ## Evaluate that all modules required are installed
-    &EvalModules(\@modules);
+    &eval_modules(\@modules);
     
-    sub EvalModules {
+    sub eval_modules {
 	
-	##EvalModules
+	##eval_modules
 	
 	##Function : Evaluate that all modules required are installed 
 	##Returns  : ""
-	##Arguments: $modulesArrayRef
-	##         : $modulesArrayRef => Array of module names
+	##Arguments: $modules_ref
+	##         : $modules_ref => Array of module names
 	
-	my $modulesArrayRef = $_[0];
+	my $modules_ref = $_[0];
 	
-	foreach my $module (@{$modulesArrayRef}) {
+	foreach my $module (@$modules_ref) {
 	    
 	    $module =~s/::/\//g;  #Replace "::" with "/" since the automatic replacement magic only occurs for barewords.
 	    $module .= ".pm";  #Add perl module ending for the same reason
@@ -32,7 +32,7 @@ BEGIN {
 	    };
 	    if($@) {
 		
-		warn("NOTE: ".$module." not installed - Please install to run grid-crawler tests.\n");
+		warn("NOTE: ".$module." not installed - Please install to run grid_crawler tests.\n");
 		warn("NOTE: Aborting!\n");
 		exit 1;
 	    }

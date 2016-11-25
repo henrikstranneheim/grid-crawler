@@ -8,7 +8,7 @@ use v5.18;  #Require at least perl 5.18
 
 
 BEGIN {
-    
+
     my @modules = ("Modern::Perl",
 		   "warnings",
 		   "autodie",
@@ -25,32 +25,32 @@ BEGIN {
 		   "YAML",
 		   "Log::Log4perl",
 	);
-    
+
     ## Evaluate that all modules required are installed
-    &EvalModules(\@modules);
-    
-    sub EvalModules {
-	
-	##EvalModules
-	
-	##Function : Evaluate that all modules required are installed 
+    eval_modules(\@modules);
+
+    sub eval_modules {
+
+	##eval_modules
+
+	##Function : Evaluate that all modules required are installed
 	##Returns  : ""
-	##Arguments: $modulesArrayRef
-	##         : $modulesArrayRef => Array of module names
-	
-	my $modulesArrayRef = $_[0];
-	
-	foreach my $module (@{$modulesArrayRef}) {
-	    
+	##Arguments: $modules_ref
+	##         : $modules_ref => Array of module names
+
+	my $modules_ref = $_[0];
+
+	foreach my $module (@$modules_ref) {
+
 	    $module =~s/::/\//g;  #Replace "::" with "/" since the automatic replacement magic only occurs for barewords.
 	    $module .= ".pm";  #Add perl module ending for the same reason
-	    
-	    eval { 
-		
-		require $module; 
+
+	    eval {
+
+		require $module;
 	    };
 	    if($@) {
-		
+
 		warn("NOTE: ".$module." not installed - Please install to run MIP.\n");
 		warn("NOTE: Aborting!\n");
 		exit 1;
@@ -81,18 +81,19 @@ use YAML;
 our $USAGE;
 
 BEGIN {
+
     $USAGE =
 	qq{test.t
-           -h/--help Display this help message   
+           -h/--help Display this help message
            -v/--version Display version
-        };    
+        };
 }
 
-my $testVersion = "0.0.0";
+my $test_version = "0.0.0";
 
 ###User Options
 GetOptions('h|help' => sub { print STDOUT $USAGE, "\n"; exit;},  #Display help text
-	   'v|version' => sub { print STDOUT "\ntest.t ".$testVersion, "\n\n"; exit;},  #Display version number
+	   'v|version' => sub { print STDOUT "\ntest.t ".$test_version, "\n\n"; exit;},  #Display version number
     );
 
 
@@ -101,16 +102,16 @@ GetOptions('h|help' => sub { print STDOUT $USAGE, "\n"; exit;},  #Display help t
 ############
 
 ## Test perl modules and functions
-&TestModules();
+test_modules();
 
 say "\nTesting grid file\n";
 
 use YAML;
 $YAML::QuoteNumericStrings = 1;  #Force numeric values to strings in YAML representationxs
-my $yamlfile = catdir(dirname($Bin), "templates", "grid-test-file.yaml");
+my $yaml_file = catdir(dirname($Bin), "templates", "grid_test_file.yaml");
 
 ## Loads a YAML file into an arbitrary hash and returns it.
-my %grid = &LoadYAML({yamlFile => $yamlfile,
+my %grid = load_yaml({yaml_file => $yaml_file,
 		     });
 ok(%grid, "Loaded grid file");
 ok(keys %grid == 4, "Check load of correct number of sampleIDs (=3)");
@@ -128,14 +129,14 @@ done_testing();   # reached the end safely
 ####SubRoutines#######
 ######################
 
-sub TestModules {
+sub test_modules {
 
-##TestModules
-    
-##Function : Test perl modules and functions 
+##test_modules
+
+##Function : Test perl modules and functions
 ##Returns  : ""
-##Arguments: 
-##         : 
+##Arguments:
+##         :
 
     print STDOUT "\nTesting perl modules and selected functions\n\n";
 
@@ -146,32 +147,32 @@ sub TestModules {
     use File::Basename qw(dirname);  #Strip the last part of directory
 
     ok(dirname($Bin), "File::Basename qw(dirname): Strip the last part of directory");
- 
+
     use File::Spec::Functions qw(catdir);
 
     ok(catdir(dirname($Bin), "t"),"File::Spec::Functions qw(catdir): Concatenate directories");
-    
+
     use YAML;
-    
-    my $yamlFile = catdir(dirname($Bin), "templates", "grid-test-file.yaml");
-    ok( -f $yamlFile,"YAML: File= $yamlFile in grid-crawler directory");
-    
-    my $yaml = YAML::LoadFile($yamlFile);  #Create an object
+
+    my $yaml_file = catdir(dirname($Bin), "templates", "grid_test_file.yaml");
+    ok( -f $yaml_file,"YAML: File= $yaml_file in grid-crawler directory");
+
+    my $yaml = YAML::LoadFile($yaml_file);  #Create an object
     ok( defined $yaml,"YAML: Load File" );  #Check that we got something
     ok(Dump( $yaml ),"YAML: Dump file");
 
     use Log::Log4perl;
     ## Creates log
-    my $logFile = catdir(dirname($Bin), "templates", "grid-crawler-log.yaml");
-    ok( -f $logFile,"Log::Log4perl: File= $logFile in grid-crawler directory");
+    my $log_file = catdir(dirname($Bin), "templates", "grid_crawler_log.yaml");
+    ok( -f $log_file,"Log::Log4perl: File= $log_file in grid-crawler directory");
 
     ## Create log4perl config file
-    my $config = &CreateLog4perlCongfig(\$logFile);
-    
+    my $config = create_log4perl_congfig(\$log_file);
+
     ok(Log::Log4perl->init(\$config), "Log::Log4perl: Initate");
-    ok(Log::Log4perl->get_logger("grid-crawlerLogger"), "Log::Log4perl: Get logger");
-    
-    my $logger = Log::Log4perl->get_logger("grid-crawlerLogger");
+    ok(Log::Log4perl->get_logger("grid-crawler_logger"), "Log::Log4perl: Get logger");
+
+    my $logger = Log::Log4perl->get_logger("grid-crawler_logger");
     ok($logger->info("1"), "Log::Log4perl: info");
     ok($logger->warn("1"), "Log::Log4perl: warn");
     ok($logger->error("1"), "Log::Log4perl: error");
@@ -185,11 +186,11 @@ sub TestModules {
 
     ## Check time
     use Time::Piece;
-    my $dateTime = localtime;
-    ok($dateTime, "localtime = $dateTime");
-    my $dateTimeStamp = $dateTime->datetime;
-    ok($dateTimeStamp, "datetime = $dateTime");
-    my $date = $dateTime->ymd;
+    my $date_time = localtime;
+    ok($date_time, "localtime = $date_time");
+    my $date_time_stamp = $date_time->datetime;
+    ok($date_time_stamp, "datetime = $date_time");
+    my $date = $date_time->ymd;
     ok($date, "ymd = $date");
 
     ## Locate name of script
@@ -198,21 +199,21 @@ sub TestModules {
 }
 
 
-sub CreateLog4perlCongfig {
+sub create_log4perl_congfig {
 
-##CreateLog4perlCongfig
-    
-##Function : Create log4perl config file. 
+##create_log4perl_congfig
+
+##Function : Create log4perl config file.
 ##Returns  : "$config"
-##Arguments: $fileName
-##         : $fileName => log4perl config file {REF}
+##Arguments: $file_name
+##         : $file_name => log4perl config file {REF}
 
-    my $fileNameRef = $_[0];
+    my $file_nameRef = $_[0];
 
     my $conf = q?
-        log4perl.category.grid-crawlerLogger = TRACE, ScreenApp
+        log4perl.category.grid-crawler_logger = TRACE, ScreenApp
         log4perl.appender.LogFile = Log::Log4perl::Appender::File
-        log4perl.appender.LogFile.filename = ?.$$fileNameRef.q?
+        log4perl.appender.LogFile.filename = ?.$$file_nameRef.q?
         log4perl.appender.LogFile.layout=PatternLayout
         log4perl.appender.LogFile.layout.ConversionPattern = [%p] %d %c - %m%n
         log4perl.appender.ScreenApp = Log::Log4perl::Appender::Screen
@@ -223,33 +224,33 @@ sub CreateLog4perlCongfig {
 }
 
 
-sub LoadYAML {
- 
-##LoadYAML
-    
-##Function : Loads a YAML file into an arbitrary hash and returns it. Note: Currently only supports hashreferences and hashes and no mixed entries.
-##Returns  : %yamlHash
-##Arguments: $yamlFile
-##         : $yamlFile => The yaml file to load
+sub load_yaml {
 
-    my ($argHashRef) = @_;
+##load_yaml
+
+##Function : Loads a YAML file into an arbitrary hash and returns it. Note: Currently only supports hashreferences and hashes and no mixed entries.
+##Returns  : %yaml
+##Arguments: $yaml_file
+##         : $yaml_file => The yaml file to load
+
+    my ($arg_href) = @_;
 
     ##Flatten argument(s)
-    my $yamlFile;
+    my $yaml_file;
 
-    my $tmpl = { 
-	yamlFile => { required => 1, defined => 1, strict_type => 1, store => \$yamlFile},
+    my $tmpl = {
+	yaml_file => { required => 1, defined => 1, strict_type => 1, store => \$yaml_file},
     };
 
-    check($tmpl, $argHashRef, 1) or die qw[Could not parse arguments!];
+    check($tmpl, $arg_href, 1) or die qw[Could not parse arguments!];
 
-    my %yamlHash;
+    my %yaml;
 
-    open (my $YAML, "<", $yamlFile) or die "can't open ".$yamlFile.":".$!, "\n";  #Log4perl not initialised yet, hence no logdie
+    open (my $YAML, "<", $yaml_file) or die "can't open ".$yaml_file.":".$!, "\n";  #Log4perl not initialised yet, hence no logdie
     local $YAML::QuoteNumericStrings = 1;  #Force numeric values to strings in YAML representation
-    %yamlHash = %{ YAML::LoadFile($yamlFile) };  #Load hashreference as hash
-        
+    %yaml = %{ YAML::LoadFile($yaml_file) };  #Load hashreference as hash
+
     close($YAML);
 
-    return %yamlHash;
+    return %yaml;
 }
