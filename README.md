@@ -1,34 +1,34 @@
-# grid-crawler
+# grid_crawler
 
 Query multiple vcf files simultaneously using sample identity, position(s), genotypes or other vcf data.
 
 ## Overview
 
-Grid-crawler uses a grid file to enable querying of multiple vcf files simultaneously by wrapping around bcftools view and merge. Each query can be either processed sequentially via SHELL or submitted via an SBATCH script to SLURM and proccessed in parallel using xargs. 
+Grid_crawler uses a grid file to enable querying of multiple vcf files simultaneously by wrapping around bcftools view and merge. Each query can be either processed sequentially via SHELL or submitted via an SBATCH script to SLURM and proccessed in parallel using xargs. 
 
 ## Example usage
 
 ```
-$ perl grid-crawler.pl grid-file.yaml -s sampleID_1 -s sampleID_2  -s sampleID_3 -p 1,X:200050-2000600,22:456793-456793 -g ^miss -e "DV>5 && INFO/SGB>3 " -env shell -sen source activate mip4.0 -ot b
+$ perl grid_crawler.pl grid_file.yaml -s sampleID_1 -s sampleID_2  -s sampleID_3 -p 1,X:200050-2000600,22:456793-456793 -g ^miss -e "DV>5 && INFO/SGB>3 " -env shell -sen source activate mip4.0 -ot b
 ```
 
 ## Installation
 
-Grid-crawler is written in perl and therfore requires that perl is installed on your OS. 
+Grid_crawler is written in perl and therfore requires that perl is installed on your OS. 
 
 
  ```
- $ git clone https://github.com/henrikstranneheim/grid-crawler.git
- $ cd grid-crawler
+ $ git clone https://github.com/henrikstranneheim/grid_crawler.git
+ $ cd grid_crawler
  ```
 
-After this you can decide whether to make grid-crawler an "executable" by either adding the install directory to the ``$PATH`` in e.g.  "``~/.bash_profile``" or move all the files from this directory to somewhere already in your path like "``~/usr/bin``". 
+After this you can decide whether to make grid_crawler an "executable" by either adding the install directory to the ``$PATH`` in e.g.  "``~/.bash_profile``" or move all the files from this directory to somewhere already in your path like "``~/usr/bin``". 
  Remember to make the file(s) executable by ``chmod +x file``.
 
 ### Testing
 
 ```
-$ cd t; perl run-test.pl
+$ cd t; perl run_test.pl
 ```
 
 ## Input
@@ -74,7 +74,7 @@ Optionally activate a conda environment prior to executing queries.
 
 ## Output
 
-Grid-crawler will automatically merge the output variants to a single file if analysing more than two unique paths.
+Grid_crawler will automatically merge the output variants to a single file if analysing more than two unique paths.
 
 Redirect query output data using ('--outDataDir').
 
