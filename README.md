@@ -1,4 +1,5 @@
 # grid-crawler
+[![Build Status](https://travis-ci.org/henrikstranneheim/grid_crawler.svg?branch=master)](https://travis-ci.org/henrikstranneheim/grid_crawler)
 
 Query multiple vcf files simultaneously using sample identity, position(s), genotypes or other vcf data.
 
