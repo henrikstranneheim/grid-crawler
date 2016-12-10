@@ -18,6 +18,7 @@ install:
   - cpanm Modern::Perl
   - cpanm YAML
   - cpanm Log::Log4perl
+  - cpanm TAP::Harness
   
 script:
 - perl t/run-test.pl
