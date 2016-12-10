@@ -4,6 +4,8 @@ perl:
   
 before_install:
   - cpanm Modern::Perl
+  - cpanm YAML
+  - cpanm Log::Log4perl
 
 install:
   - cpanm -v --installdeps --notest .
