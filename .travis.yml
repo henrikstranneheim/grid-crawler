@@ -21,4 +21,5 @@ install:
   - cpanm TAP::Harness
   
 script:
-- perl t/run-test.pl
+  - cd t
+  - perl run-test.pl
